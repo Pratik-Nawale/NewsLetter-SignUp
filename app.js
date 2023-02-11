@@ -9,11 +9,12 @@ const port = 8000;
 
 const app = express();
 
-client.setConfig({apiKey: process.env.apiKey,  server: "us21",});
+// client.setConfig({apiKey: process.env.apiKey,  server: "us21",});
+client.setConfig({apiKey: "cc26818f0cf0ef1032203bd2d7e0d5c4-us21",  server: "us21",});
 
 app.use(express.static("public"));
 app.use(bodyParse.urlencoded({extended: true}));
-app.use(dotenv);
+// app.use(dotenv);
 
 
 app.get("/", function(req, res){
@@ -71,27 +72,26 @@ app.post("/", function(req, res){
     }
 
     const run = async () => {
-        const response = await client.lists.addListMember(process.env.audience_id, {
-          email_address: subscribingUser.email,
-          status: "subscribed",
-          merge_fields: {
-              FNAME: subscribingUser.firstName,
-              LNAME: subscribingUser.lastName
-          }
+        const response = await client.lists.addListMember("7c67c43213", {
+            email_address: subscribingUser.email,
+            status: "subscribed",
+            merge_fields: {
+                FNAME: subscribingUser.firstName,
+                LNAME: subscribingUser.lastName
+            }
         });
-        console.log(response); // (optional) 
-      };
+
+        if(response.statusCode == 200){
+            res.sendFile(__dirname+"/success.html")
+          }
+          else{
+            res.sendFile(__dirname+"/failure.html")
+            
+          }
+
+        }
 
       run();
-
-      if(response.statusCode == 200){
-        res.sendFile(__dirname+"/success.html")
-      }
-      else{
-        res.sendFile(__dirname+"/failure.html")
-        
-      }
-
 });
 
 app.post("/failure", function(req, res){
@@ -99,7 +99,7 @@ app.post("/failure", function(req, res){
 })
 
 
-app.listen(process.env.PORT || port, function(err){
+app.listen(port, function(err){
     if(err){
         console.log("Error while running the server "+ err);
     }
