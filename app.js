@@ -2,16 +2,18 @@ const express = require("express");
 const request = require("request");
 const bodyParse = require("body-parser")
 const https = require("https")
+const dotenv = require("dotenv")
 const client = require("@mailchimp/mailchimp_marketing");
 const { response } = require("express");
 const port = 8000;
 
 const app = express();
 
-client.setConfig({apiKey: "cc26818f0cf0ef1032203bd2d7e0d5c4-us21",  server: "us21",});
+client.setConfig({apiKey: process.env.apiKey,  server: "us21",});
 
 app.use(express.static("public"));
 app.use(bodyParse.urlencoded({extended: true}));
+app.use(dotenv);
 
 
 app.get("/", function(req, res){
@@ -69,7 +71,7 @@ app.post("/", function(req, res){
     }
 
     const run = async () => {
-        const response = await client.lists.addListMember("7c67c43213", {
+        const response = await client.lists.addListMember(process.env.audience_id, {
           email_address: subscribingUser.email,
           status: "subscribed",
           merge_fields: {
